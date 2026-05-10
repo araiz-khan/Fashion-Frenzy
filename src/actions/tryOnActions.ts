@@ -10,6 +10,18 @@ export async function performVirtualTryOn(input: VirtualTryOnInput): Promise<Vir
     return result;
   } catch (error) {
     console.error("Error performing virtual try-on:", error);
-    return { error: "Failed to generate your virtual try-on image. The AI model might be busy or unavailable. Please try again later." };
+    const details = error instanceof Error ? error.message : "Unknown error";
+
+    if (/GPU quota exceeded|ZeroGPU|quota exceeded/i.test(details)) {
+      const etaMatch = details.match(/retry after\s+([0-9:]+)/i);
+      const eta = etaMatch?.[1];
+      return {
+        error: eta
+          ? `AI service is busy (GPU quota reached). Please retry after ${eta}.`
+          : "AI service is busy (GPU quota reached). Please try again later.",
+      };
+    }
+
+    return { error: `Failed to generate your virtual try-on image. ${details}` };
   }
 }

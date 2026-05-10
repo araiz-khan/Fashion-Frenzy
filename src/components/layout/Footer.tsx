@@ -46,18 +46,18 @@ const PayPalIcon = () => (
 export function Footer() {
   return (
     <footer className="bg-muted/40 border-t border-border/40 text-sm text-muted-foreground">
-      <div className="container py-12">
+      <div className="container mx-auto py-10 px-4 md:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Column 1: Logo & About */}
-          <div className="space-y-4 md:col-span-1">
-            <Logo />
+          <div className="space-y-4 flex flex-col">
+            <div className="mb-2"><Logo /></div>
             <p className="max-w-xs">
               Shop from hundreds of small fashion brands. Each purchase supports an independent creator.
             </p>
           </div>
 
           {/* Column 2: Quick Links */}
-          <div className="md:col-span-1">
+          <div className="flex flex-col">
             <h3 className="font-semibold text-foreground mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li><Link href="/shop" className="hover:text-primary transition-colors">Shop</Link></li>
@@ -68,7 +68,7 @@ export function Footer() {
           </div>
 
           {/* Column 3: Customer Service */}
-           <div className="md:col-span-1">
+           <div className="flex flex-col">
             <h3 className="font-semibold text-foreground mb-4">Customer Service</h3>
             <ul className="space-y-2">
               <li><Link href="/shipping" className="hover:text-primary transition-colors">Shipping & Returns</Link></li>
@@ -78,7 +78,7 @@ export function Footer() {
           </div>
 
           {/* Column 4: Follow Us & Socials */}
-          <div className="md:col-span-1">
+          <div className="flex flex-col">
              <h3 className="font-semibold text-foreground mb-4">Follow Us</h3>
              <div className="flex space-x-4">
               <Link href="#" aria-label="Facebook" className="text-muted-foreground hover:text-primary transition-colors"><Facebook /></Link>
@@ -89,11 +89,11 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border/40 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
-          <p className="mb-4 md:mb-0">&copy; {new Date().getFullYear()} Fashion Frenzy. All Rights Reserved.</p>
-          <div className="flex items-center space-x-2">
-            <span className="font-medium text-foreground">We Accept:</span>
-            <div className="flex items-center space-x-1">
+        <div className="mt-10 pt-6 border-t border-border/40 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p>&copy; {new Date().getFullYear()} Fashion Frenzy. All Rights Reserved.</p>
+          <div className="flex items-center space-x-4">
+            <span className="font-medium text-foreground hidden sm:inline-block">We Accept:</span>
+            <div className="flex items-center space-x-2">
                 <VisaIcon />
                 <MastercardIcon />
                 <AmexIcon />

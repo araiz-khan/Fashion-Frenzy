@@ -8,7 +8,7 @@ export type ProductSize = "XS" | "S" | "M" | "L" | "XL" | "One Size";
 export const ALL_SIZES: ProductSize[] = ["XS", "S", "M", "L", "XL", "One Size"];
 
 export type Product = {
-  id: string; // Firestore document ID when fetched
+  id: string; // Database document ID when fetched
   name: string;
   description: string;
   price: number;
@@ -16,7 +16,7 @@ export type Product = {
   category: ProductCategory;
   sizes: ProductSize[];
   sellerId: string; 
-  createdAt?: string; // Serialized Firestore Timestamp (ISO string)
+  createdAt?: string; // Serialized timestamp (ISO string)
 };
 
 // Zod schema for validating Product data, can be used in Genkit flows.

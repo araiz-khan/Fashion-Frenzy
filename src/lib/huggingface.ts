@@ -1,73 +1,106 @@
 /**
  * Hugging Face API Integration for Virtual Try-On
- * Uses the fashn-ai/fashn-vton-1.5 model via Hugging Face Inference API
+ * Uses the fashn-ai/fashn-vton-1.5 model via Gradio API
  */
 
-export async function callHuggingFaceVTON(
-  personImage: Blob | Buffer,
-  garmentImage: Blob | Buffer,
-  garmentDescription: string
-): Promise<Blob> {
-  const apiKey = process.env.HUGGINGFACE_API_KEY;
-  
-  if (!apiKey) {
-    throw new Error("HUGGINGFACE_API_KEY environment variable is not set");
+import { callGradioTryOn } from "./gradioClient";
+
+type BinaryImage = Blob | Buffer;
+
+function parseDataUri(dataURI: string): { mimeType: string; buffer: Buffer } {
+  const match = dataURI.match(/^data:(.*?);base64,(.*)$/);
+  if (!match) {
+    throw new Error("Invalid data URI format");
   }
 
-  const formData = new FormData();
-  formData.append("human_img", personImage);
-  formData.append("clothing_img", garmentImage);
-  formData.append("garment_description", garmentDescription);
+  const mimeType = match[1] || "image/png";
+  const base64 = match[2] || "";
+  const buffer = Buffer.from(base64, "base64");
+  return { mimeType, buffer };
+}
 
-  const response = await fetch(
-    "https://api-inference.huggingface.co/models/fashn-ai/fashn-vton",
-    {
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-      },
-      method: "POST",
-      body: formData,
-    }
-  );
+export async function imageSourceToBuffer(source: string): Promise<{ mimeType: string; buffer: Buffer }> {
+  if (source.startsWith("data:")) {
+    return parseDataUri(source);
+  }
 
+  if (!/^https?:\/\//i.test(source)) {
+    throw new Error("Image source must be a data URI or a valid http(s) URL");
+  }
+
+  const response = await fetch(source);
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(
-      `Hugging Face API error: ${response.status} ${response.statusText} - ${errorText}`
+    throw new Error(`Failed to fetch image source: ${response.status} ${response.statusText}`);
+  }
+
+  const mimeType = response.headers.get("content-type") || "image/png";
+  const arrayBuffer = await response.arrayBuffer();
+  return { mimeType, buffer: Buffer.from(arrayBuffer) };
+}
+
+export async function callHuggingFaceVTON(
+  personImage: BinaryImage,
+  garmentImage: BinaryImage,
+  garmentDescription: string,
+  garmentCategory: string = "tops"
+): Promise<Buffer> {
+  try {
+    const resultUrl = await callGradioTryOn(
+      personImage,
+      garmentImage,
+      garmentCategory,
+      "model",
+      50,
+      1.5,
+      42,
+      true
     );
-  }
 
-  const blob = await response.blob();
-  
-  if (!blob.type.startsWith("image/")) {
-    throw new Error("Hugging Face API did not return an image");
-  }
+    const response = await fetch(resultUrl);
 
-  return blob;
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch try-on result: ${response.status} ${response.statusText}`
+      );
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    return Buffer.from(arrayBuffer);
+  } catch (error) {
+    console.error("Error calling Gradio VTON:", error);
+    throw error;
+  }
 }
 
 /**
  * Convert a data URI to a Blob
  */
 export function dataURItoBlob(dataURI: string): Blob {
-  const arr = dataURI.split(",");
-  const mimeMatch = arr[0].match(/:(.*?);/);
-  const mime = mimeMatch ? mimeMatch[1] : "image/jpeg";
-  const bstr = atob(arr[1]);
+  const { mimeType, buffer } = parseDataUri(dataURI);
+
+  if (typeof window === "undefined") {
+    return buffer as unknown as Blob;
+  }
+
+  const bstr = atob(buffer.toString("base64"));
   const n = bstr.length;
   const u8arr = new Uint8Array(n);
-  
   for (let i = 0; i < n; i++) {
     u8arr[i] = bstr.charCodeAt(i);
   }
-  
-  return new Blob([u8arr], { type: mime });
+  return new Blob([u8arr], { type: mimeType });
 }
 
 /**
  * Convert a Blob to a data URI
  */
 export async function blobToDataURI(blob: Blob): Promise<string> {
+  if (typeof window === "undefined") {
+    const maybeBuffer = blob as unknown as Buffer;
+    const base64 = Buffer.from(maybeBuffer).toString("base64");
+    return `data:image/png;base64,${base64}`;
+  }
+
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onloadend = () => resolve(reader.result as string);

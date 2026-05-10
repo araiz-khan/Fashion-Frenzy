@@ -8,8 +8,8 @@ export function HeroSection() {
   return (
     <section className="relative w-full h-[60vh] md:h-[70vh] flex items-center justify-center text-center text-white overflow-hidden">
       <div 
-        className="absolute inset-0 bg-cover bg-center z-0" 
-        style={{ backgroundImage: 'url(https://i.postimg.cc/7Y97KXHx/Chat-GPT-Image-Jun-25-2025-07-22-28-AM.png)' }}
+        className="absolute inset-0 bg-cover bg-center bg-[center_20%] z-0" 
+        style={{ backgroundImage: "url('/images/hero_banner.png')" }}
         data-ai-hint="fashion runway model"
       >
         <div className="absolute inset-0 bg-black/50"></div>

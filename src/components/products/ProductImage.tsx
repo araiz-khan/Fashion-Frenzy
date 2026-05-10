@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { cn } from '@/lib/utils';
 
 interface ProductImageProps {
@@ -11,7 +12,13 @@ interface ProductImageProps {
   aiHint?: string;
 }
 
-const WHITELISTED_HOSTNAMES = ['placehold.co', 'firebasestorage.googleapis.com'];
+const WHITELISTED_HOSTNAMES = [
+  'placehold.co',
+  'firebasestorage.googleapis.com',
+  'res.cloudinary.com',
+];
+
+const CloudinaryImage = dynamic(() => import('./CloudinaryImage'), { ssr: false });
 
 export function ProductImage({ src, alt, width, height, className, priority = false, aiHint = "fashion clothing" }: ProductImageProps) {
   const placeholderSrc = `https://placehold.co/${width}x${height}.png`;
@@ -44,16 +51,32 @@ export function ProductImage({ src, alt, width, height, className, priority = fa
   return (
     <div className={cn("relative overflow-hidden rounded-md bg-muted", className)} style={{ width, height }}>
       {isWhitelisted ? (
-        <Image
-          src={src || placeholderSrc}
-          alt={alt}
-          width={width}
-          height={height}
-          className={imageClasses}
-          priority={priority}
-          data-ai-hint={aiHint}
-          onError={handleError}
-        />
+        // If this is a Cloudinary-hosted URL, use the client-side wrapper; otherwise use next/image
+        ((): JSX.Element | null => {
+          try {
+            const url = new URL(src || '');
+            if (url.hostname === 'res.cloudinary.com') {
+              return (
+                <CloudinaryImage src={src} alt={alt} width={width} height={height} className={imageClasses} priority={priority} />
+              );
+            }
+          } catch (e) {
+            // fall through to default rendering
+          }
+
+          return (
+            <Image
+              src={src || placeholderSrc}
+              alt={alt}
+              width={width}
+              height={height}
+              className={imageClasses}
+              priority={priority}
+              data-ai-hint={aiHint}
+              onError={handleError}
+            />
+          );
+        })()
       ) : (
         // Using a standard <img> tag for non-whitelisted domains to avoid Next.js errors.
         <img

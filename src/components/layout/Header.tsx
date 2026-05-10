@@ -23,11 +23,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { auth } from '@/lib/firebase/config';
-import type { User as FirebaseUser } from 'firebase/auth';
-import { onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
+import { signOut, useSession } from 'next-auth/react';
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from 'next/navigation';
 import { useCurrency } from '@/contexts/CurrencyContext';
@@ -46,23 +44,15 @@ export function Header() {
   const { currency, setCurrency } = useCurrency();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isMobile = useIsMobile();
-  const [currentUser, setCurrentUser] = useState<FirebaseUser | null>(null);
-  const [loadingAuth, setLoadingAuth] = useState(true);
+  const { data: session } = useSession();
+  const currentUser = session?.user ?? null;
   const { toast } = useToast();
   const router = useRouter();
-  const { setTheme } = useTheme();
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-      setLoadingAuth(false);
-    });
-    return () => unsubscribe();
-  }, []);
+  const { theme, setTheme } = useTheme();
 
   const handleLogout = async () => {
     try {
-      await firebaseSignOut(auth);
+      await signOut({ redirect: false });
       toast({
         title: 'Logged Out',
         description: 'You have been successfully logged out.',
@@ -79,7 +69,7 @@ export function Header() {
     }
   };
 
-  const UserActionsMenu = ({onItemClick}: {onItemClick?: () => void}) => (
+  const UserActionsMenu = ({ onItemClick }: { onItemClick?: () => void }) => (
     <>
       {currentUser ? (
         <>
@@ -96,7 +86,7 @@ export function Header() {
             <Heart className="mr-2 h-4 w-4" />
             <span>Wishlist</span>
           </DropdownMenuItem>
-           <DropdownMenuItem onClick={() => { router.push('/style-assistant'); onItemClick?.(); }}>
+          <DropdownMenuItem onClick={() => { router.push('/style-assistant'); onItemClick?.(); }}>
             <Sparkles className="mr-2 h-4 w-4" />
             <span>AI Style Assistant</span>
           </DropdownMenuItem>
@@ -105,7 +95,7 @@ export function Header() {
             <span>Seller Dashboard</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => {handleLogout(); onItemClick?.();}} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
+          <DropdownMenuItem onClick={() => { handleLogout(); onItemClick?.(); }} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
             <LogOut className="mr-2 h-4 w-4" />
             <span>Sign out</span>
           </DropdownMenuItem>
@@ -121,11 +111,11 @@ export function Header() {
             <span>Sign Up</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-           <DropdownMenuItem onClick={() => { router.push('/style-assistant'); onItemClick?.(); }}>
+          <DropdownMenuItem onClick={() => { router.push('/style-assistant'); onItemClick?.(); }}>
             <Sparkles className="mr-2 h-4 w-4" />
             <span>AI Style Assistant</span>
           </DropdownMenuItem>
-           <DropdownMenuItem onClick={() => { router.push('/shop'); onItemClick?.(); }}>
+          <DropdownMenuItem onClick={() => { router.push('/shop'); onItemClick?.(); }}>
             <Camera className="mr-2 h-4 w-4" />
             <span>AI Try-On</span>
           </DropdownMenuItem>
@@ -156,115 +146,105 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-2 md:gap-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="hidden md:flex text-muted-foreground hover:text-primary">
-                  {currency}
-                  <ChevronDown className="ml-1 h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Select Currency</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuRadioGroup value={currency} onValueChange={(value) => setCurrency(value as 'USD' | 'PKR')}>
-                  <DropdownMenuRadioItem value="USD">USD ($)</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="PKR">PKR (Rs)</DropdownMenuRadioItem>
-                </DropdownMenuRadioGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="hidden md:flex text-muted-foreground hover:text-primary">
+                {currency}
+                <ChevronDown className="ml-1 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Select Currency</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuRadioGroup value={currency} onValueChange={(value) => setCurrency(value as 'USD' | 'PKR')}>
+                <DropdownMenuRadioItem value="USD">USD ($)</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="PKR">PKR (Rs)</DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-            <Button variant="ghost" size="icon" asChild className="text-muted-foreground hover:text-primary relative">
-              <Link href="/wishlist">
-                <Heart className="h-5 w-5" />
-                {wishlistItems.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                    {wishlistItems.length}
-                  </span>
-                )}
-                <span className="sr-only">Wishlist</span>
-              </Link>
-            </Button>
-            <Button variant="ghost" size="icon" asChild className="text-muted-foreground hover:text-primary relative">
-              <Link href="/cart">
-                <ShoppingCart className="h-5 w-5" />
-                {cartTotalItems > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                    {cartTotalItems}
-                  </span>
-                )}
-                <span className="sr-only">Cart</span>
-              </Link>
-            </Button>
+          <Button variant="ghost" size="icon" asChild className="text-muted-foreground hover:text-primary relative">
+            <Link href="/wishlist">
+              <Heart className="h-5 w-5" />
+              {wishlistItems.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                  {wishlistItems.length}
+                </span>
+              )}
+              <span className="sr-only">Wishlist</span>
+            </Link>
+          </Button>
+          <Button variant="ghost" size="icon" asChild className="text-muted-foreground hover:text-primary relative">
+            <Link href="/cart">
+              <ShoppingCart className="h-5 w-5" />
+              {cartTotalItems > 0 && (
+                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                  {cartTotalItems}
+                </span>
+              )}
+              <span className="sr-only">Cart</span>
+            </Link>
+          </Button>
 
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-muted-foreground hover:text-primary relative"
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          >
+            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            <span className="sr-only">Toggle theme</span>
+          </Button>
+
+          <div className="hidden md:block">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
-                  <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                  <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                  <span className="sr-only">Toggle theme</span>
+                  <User className="h-5 w-5" />
+                  <span className="sr-only">User Menu</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setTheme("light")}>
-                  Light
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("dark")}>
-                  Dark
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("system")}>
-                  System
-                </DropdownMenuItem>
+              <DropdownMenuContent align="end" className="w-56 bg-popover text-popover-foreground">
+                <UserActionsMenu />
               </DropdownMenuContent>
             </DropdownMenu>
-
-            <div className="hidden md:block">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
-                    <User className="h-5 w-5" />
-                    <span className="sr-only">User Menu</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-popover text-popover-foreground">
-                  <UserActionsMenu />
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-
-            <div className="md:hidden">
-              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
-                    <Menu className="h-6 w-6" />
-                    <span className="sr-only">Open menu</span>
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="right" className="w-[300px] p-0 flex flex-col bg-card text-card-foreground">
-                  <div className="flex justify-between items-center p-4 border-b border-border">
-                    <SheetClose asChild><Logo /></SheetClose>
-                    <SheetClose asChild>
-                       <Button variant="ghost" size="icon"><X className="h-5 w-5"/></Button>
-                    </SheetClose>
-                  </div>
-                  <nav className="flex-grow p-4 space-y-2">
-                    {mainNavLinks.map((link) => (
-                      <SheetClose key={link.label} asChild>
-                        <Button variant="ghost" asChild className="w-full justify-start text-lg py-3 text-foreground hover:text-primary">
-                           <Link href={link.href}>
-                              {link.icon && <link.icon className="mr-2 h-4 w-4" />}
-                              {link.label}
-                           </Link>
-                        </Button>
-                      </SheetClose>
-                    ))}
-                  </nav>
-                  <div className="p-4 border-t border-border">
-                    <UserActionsMenu onItemClick={() => setMobileMenuOpen(false)} />
-                  </div>
-                </SheetContent>
-              </Sheet>
-            </div>
           </div>
+
+          <div className="md:hidden">
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
+                  <Menu className="h-6 w-6" />
+                  <span className="sr-only">Open menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px] p-0 flex flex-col bg-card text-card-foreground">
+                <div className="flex justify-between items-center p-4 border-b border-border">
+                  <SheetClose asChild><Logo /></SheetClose>
+                  <SheetClose asChild>
+                    <Button variant="ghost" size="icon"><X className="h-5 w-5" /></Button>
+                  </SheetClose>
+                </div>
+                <nav className="flex-grow p-4 space-y-2">
+                  {mainNavLinks.map((link) => (
+                    <SheetClose key={link.label} asChild>
+                      <Button variant="ghost" asChild className="w-full justify-start text-lg py-3 text-foreground hover:text-primary">
+                        <Link href={link.href}>
+                          {link.icon && <link.icon className="mr-2 h-4 w-4" />}
+                          {link.label}
+                        </Link>
+                      </Button>
+                    </SheetClose>
+                  ))}
+                </nav>
+                <div className="p-4 border-t border-border">
+                  <UserActionsMenu onItemClick={() => setMobileMenuOpen(false)} />
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+        </div>
       </div>
     </header>
   );

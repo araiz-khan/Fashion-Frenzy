@@ -31,7 +31,7 @@ export function PromotionalBanner() {
         <div className="flex items-center justify-center h-full">
             <Gift className="inline-block h-4 w-4 mr-2 shrink-0" />
             <Link href="/shipping" className="hover:underline focus:underline outline-none">
-                Free Shipping On Orders Over $50
+                Free Shipping On Orders Over 10,000 PKR
             </Link>
             <Button
                 variant="ghost"
