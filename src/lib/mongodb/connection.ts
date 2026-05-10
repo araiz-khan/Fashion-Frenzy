@@ -3,9 +3,7 @@ import mongoose, { Connection } from "mongoose";
 const USERS_MONGODB_URI = process.env.USERS_MONGODB_URI;
 const PRODUCTS_MONGODB_URI = process.env.PRODUCTS_MONGODB_URI;
 
-if (!USERS_MONGODB_URI || !PRODUCTS_MONGODB_URI) {
-  throw new Error("Missing USERS_MONGODB_URI or PRODUCTS_MONGODB_URI in environment.");
-}
+// Environment variables checked inside functions to prevent build-time crashes
 
 type MongooseConnectionCache = {
   conn: Connection | null;
@@ -26,6 +24,10 @@ if (!cachedProducts) {
 export async function connectToUsersDb(): Promise<Connection> {
   if (cachedUsers.conn) return cachedUsers.conn;
 
+  if (!USERS_MONGODB_URI) {
+    throw new Error("Missing USERS_MONGODB_URI in environment.");
+  }
+
   if (!cachedUsers.promise) {
     cachedUsers.promise = mongoose.createConnection(USERS_MONGODB_URI!).asPromise();
   }
@@ -36,6 +38,10 @@ export async function connectToUsersDb(): Promise<Connection> {
 
 export async function connectToProductsDb(): Promise<Connection> {
   if (cachedProducts.conn) return cachedProducts.conn;
+
+  if (!PRODUCTS_MONGODB_URI) {
+    throw new Error("Missing PRODUCTS_MONGODB_URI in environment.");
+  }
 
   if (!cachedProducts.promise) {
     cachedProducts.promise = mongoose.createConnection(PRODUCTS_MONGODB_URI!).asPromise();

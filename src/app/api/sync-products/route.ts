@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/mongodb/connection";
-import { ProductModel } from "@/lib/mongodb/models/Product";
+import { getProductModel } from "@/lib/mongodb/models/Product";
 
 export async function GET() {
   try {
-    await connectToDatabase();
+    const ProductModel = await getProductModel();
 
     // Fetch all products from MongoDB
     const products = await ProductModel.find().sort({ createdAt: -1 }).lean();
