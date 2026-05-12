@@ -52,9 +52,9 @@ export default function StyleAssistantPage() {
         <div className="max-w-3xl mx-auto"> {/* Keep form part centered and narrow */}
             <div className="text-center mb-10">
             <Sparkles className="mx-auto h-16 w-16 text-primary mb-4" />
-            <h1 className="text-4xl font-headline font-bold mb-3">AI Style Assistant</h1>
+            <h1 className="text-4xl font-headline font-bold mb-3">AI Dress Wear Assistant</h1>
             <p className="text-lg text-muted-foreground">
-                Describe your fashion needs, an upcoming event, or a style you're curious about, and get personalized advice and product recommendations!
+                Describe the dress occasion, silhouette, or vibe you want, and get dress-only advice with matching product recommendations.
             </p>
             </div>
 
@@ -62,21 +62,21 @@ export default function StyleAssistantPage() {
             <CardHeader>
                 <CardTitle className="text-2xl flex items-center">
                 <Sparkles className="h-6 w-6 mr-2 text-primary" />
-                Get Personalized Style Advice
+              Get Personalized Dress Wear Advice
                 </CardTitle>
                 <CardDescription>
-                For example: "I need an outfit for a beach wedding" or "Help me find a casual chic look for fall."
+              For example: "I need a midi dress for a beach wedding" or "Help me find a casual summer dress."
                 </CardDescription>
             </CardHeader>
             <form onSubmit={handleSubmit}>
                 <CardContent className="space-y-4">
                 <div>
-                    <Label htmlFor="style-prompt" className="text-base">Your Style Request</Label>
+                  <Label htmlFor="style-prompt" className="text-base">Your Dress Wear Request</Label>
                     <Textarea
                     id="style-prompt"
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
-                    placeholder="Tell me about your style needs..."
+                  placeholder="Tell me about the dress style, occasion, or silhouette you need..."
                     rows={5}
                     className="mt-1 text-base"
                     disabled={isPending}
@@ -88,12 +88,12 @@ export default function StyleAssistantPage() {
                     {isPending ? (
                     <>
                         <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        Getting Advice...
+                        Getting Dress Advice...
                     </>
                     ) : (
                     <>
                         <Sparkles className="mr-2 h-5 w-5" />
-                        Get Style Advice
+                        Get Dress Advice
                     </>
                     )}
                 </Button>
@@ -129,11 +129,11 @@ export default function StyleAssistantPage() {
                 <CardHeader>
                   <CardTitle className="text-2xl flex items-center">
                     <Image src="https://placehold.co/40x40.png" alt="AI Stylist" width={40} height={40} className="rounded-full mr-3" data-ai-hint="avatar fashion" />
-                    Your Style Suggestions
+                    Your Dress Suggestions
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="prose dark:prose-invert max-w-none whitespace-pre-line text-base leading-relaxed">
+                <CardContent className="overflow-auto max-h-none">
+                  <div className="prose dark:prose-invert max-w-none whitespace-pre-wrap break-words text-base leading-relaxed">
                     {result.suggestions}
                   </div>
                 </CardContent>
@@ -143,7 +143,7 @@ export default function StyleAssistantPage() {
             {/* Recommended Products */}
             {result.recommendedProducts && result.recommendedProducts.length > 0 && (
               <div className="lg:col-span-1">
-                <h3 className="text-2xl font-headline font-semibold mb-6">Shop The Look</h3>
+                <h3 className="text-2xl font-headline font-semibold mb-6">Shop The Dress</h3>
                 <div className="space-y-6">
                   {result.recommendedProducts.map(product => (
                     <ProductCard key={product.id} product={product} />

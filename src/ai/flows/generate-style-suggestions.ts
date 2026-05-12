@@ -2,12 +2,10 @@
 'use server';
 
 /**
- * Rebuilt style assistant flow.
+ * Dress-only style assistant flow.
  *
- * Uses deterministic product ranking and optional Gemini text generation if
+ * Uses deterministic product ranking and Gemini text generation when
  * `GOOGLE_API_KEY` or `GEMINI_API_KEY` is available.
- *
- * This avoids runtime dependence on Genkit during normal web requests.
  */
 
 import { z } from 'zod';
@@ -17,9 +15,7 @@ import type { Product } from '@/types';
 const GenerateStyleSuggestionsInputSchema = z.object({
   prompt: z
     .string()
-    .describe(
-      'A text prompt describing the desired style or occasion for the fashion suggestions.'
-    ),
+    .describe('A text prompt describing a dress wear request or occasion.'),
 });
 export type GenerateStyleSuggestionsInput = z.infer<
   typeof GenerateStyleSuggestionsInputSchema
@@ -28,13 +24,33 @@ export type GenerateStyleSuggestionsInput = z.infer<
 const GenerateStyleSuggestionsOutputSchema = z.object({
   suggestions: z
     .string()
-    .describe('Personalized fashion suggestions based on the input prompt.'),
-  recommendedProducts: z.array(z.any()).optional().describe('A list of up to 4 recommended products from the store that match the style advice.'),
+    .describe('Personalized dress wear suggestions based on the input prompt.'),
+  recommendedProducts: z.array(z.any()).optional().describe('A list of up to 4 recommended dress products from the store.'),
 });
 export type GenerateStyleSuggestionsOutput = {
   suggestions: string;
   recommendedProducts?: Product[];
 };
+
+const DRESS_CATEGORY: Product['category'] = 'Dresses';
+const DRESS_KEYWORDS = [
+  'dress',
+  'dresses',
+  'gown',
+  'gowns',
+  'maxi dress',
+  'mini dress',
+  'midi dress',
+  'cocktail dress',
+  'evening dress',
+  'party dress',
+  'wedding dress',
+  'formal dress',
+  'casual dress',
+  'summer dress',
+  'sundress',
+  'frock',
+];
 
 const STOPWORDS = new Set([
   'the',
@@ -54,10 +70,33 @@ const STOPWORDS = new Set([
   'help',
 ]);
 
+function normalizeText(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function containsDressKeyword(prompt: string, keyword: string): boolean {
+  if (keyword.includes(' ')) {
+    return prompt.includes(keyword);
+  }
+
+  return new RegExp(`\\b${keyword}\\b`, 'i').test(prompt);
+}
+
+function isDressWearPrompt(prompt: string): boolean {
+  const normalizedPrompt = normalizeText(prompt);
+  return DRESS_KEYWORDS.some((keyword) => containsDressKeyword(normalizedPrompt, keyword));
+}
+
+function assertDressWearPrompt(prompt: string): void {
+  if (!isDressWearPrompt(prompt)) {
+    throw new Error(
+      'This assistant only provides dress wear advice. Please ask about dresses, gowns, or dress outfits.'
+    );
+  }
+}
+
 function extractKeywords(prompt: string): string[] {
-  return prompt
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, ' ')
+  return normalizeText(prompt)
     .split(/\s+/)
     .filter((token) => token.length > 2 && !STOPWORDS.has(token));
 }
@@ -66,6 +105,10 @@ function scoreProductAgainstKeywords(
   product: Product,
   keywords: string[]
 ): number {
+  if (product.category !== DRESS_CATEGORY) {
+    return 0;
+  }
+
   const bag = `${product.name} ${product.description} ${product.category}`.toLowerCase();
   let score = 0;
   for (const keyword of keywords) {
@@ -78,12 +121,12 @@ function scoreProductAgainstKeywords(
 
 function buildFallbackSuggestions(prompt: string): string {
   return [
-    `Based on your request: "${prompt}"`,
+    `Based on your dress wear request: "${prompt}"`,
     '',
-    '1. Start with one statement piece and keep the rest balanced.',
-    '2. Match textures and silhouette before focusing on color details.',
-    '3. Use one accent color and repeat it in a second item for cohesion.',
-    '4. Prioritize comfort for the occasion so confidence reads naturally.',
+    '1. Choose a dress silhouette that matches the occasion and your comfort level.',
+    '2. Keep accessories aligned with the dress length, neckline, and fabric weight.',
+    '3. Use one accent color or metallic detail to keep the look polished.',
+    '4. Finish with shoes and a bag that support the dress rather than compete with it.',
   ].join('\n');
 }
 
@@ -104,11 +147,14 @@ async function generateGeminiText(prompt: string, recommendedProducts: Product[]
         parts: [
           {
             text: [
-              'You are a concise fashion stylist for Fashion Frenzy.',
+              'You are an expert dress wear stylist for Fashion Frenzy. Your job is to provide COMPLETE, COMPREHENSIVE styling advice.',
+              'CRITICAL: Write a FULL, UNINTERRUPTED response. Do NOT cut short. Continue writing until you have covered all points thoroughly.',
+              'Only suggest dress wear advice, dress silhouettes, fabrics, colors, and complete dress outfit styling.',
+              'Do not recommend tops, pants, accessories by themselves, or any non-dress category.',
               `User request: ${prompt}`,
-              'Recommended store products:',
+              'Recommended dress products from the store:',
               catalogSnippet || 'No matching products found.',
-              'Respond in under 160 words and keep it practical.',
+              'Provide exhaustive, thorough recommendations covering: silhouette choices for the occasion, specific fabric suggestions with explanations, color palettes and why they work, detailed styling tips, multiple accessorizing ideas, shoe and bag recommendations, layering options, practical outfit assembly tips, and care instructions. Write multiple detailed paragraphs. Write the COMPLETE response with no truncation.',
             ].join('\n'),
           },
         ],
@@ -116,30 +162,38 @@ async function generateGeminiText(prompt: string, recommendedProducts: Product[]
     ],
     generationConfig: {
       temperature: 0.7,
-      maxOutputTokens: 300,
+      maxOutputTokens: 4000,
     },
   };
 
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
+  try {
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      }
+    );
+
+    if (!response.ok) {
+      const text = await response.text();
+      console.error(`Gemini API error: ${response.status} ${text}`);
+      return null;
     }
-  );
 
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`Gemini request failed: ${response.status} ${text}`);
+    const json = (await response.json()) as {
+      candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+    };
+
+    const text = json.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+    console.log('Gemini response length:', text?.length);
+    console.log('Gemini response (first 500 chars):', text?.substring(0, 500));
+    return text || null;
+  } catch (error) {
+    console.warn('Gemini request failed:', error);
+    return null;
   }
-
-  const json = (await response.json()) as {
-    candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
-  };
-
-  const text = json.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-  return text || null;
 }
 
 
@@ -147,6 +201,7 @@ export async function generateStyleSuggestions(
   input: GenerateStyleSuggestionsInput
 ): Promise<GenerateStyleSuggestionsOutput> {
   const parsed = GenerateStyleSuggestionsInputSchema.parse(input);
+  assertDressWearPrompt(parsed.prompt);
   const keywords = extractKeywords(parsed.prompt);
 
   const allProductsResult = await getAllProductsFromDB();

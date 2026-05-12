@@ -69,7 +69,7 @@ export function Header() {
     }
   };
 
-  const UserActionsMenu = ({ onItemClick }: { onItemClick?: () => void }) => (
+  const DropdownUserMenu = () => (
     <>
       {currentUser ? (
         <>
@@ -82,47 +82,122 @@ export function Header() {
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => { router.push('/wishlist'); onItemClick?.(); }}>
+          <DropdownMenuItem onClick={() => { router.push('/wishlist'); }}>
             <Heart className="mr-2 h-4 w-4" />
             <span>Wishlist</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => { router.push('/style-assistant'); onItemClick?.(); }}>
+          <DropdownMenuItem onClick={() => { router.push('/style-assistant'); }}>
             <Sparkles className="mr-2 h-4 w-4" />
             <span>AI Style Assistant</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => { router.push('/seller/dashboard'); onItemClick?.(); }}>
+          <DropdownMenuItem onClick={() => { router.push('/seller/dashboard'); }}>
             <LayoutDashboard className="mr-2 h-4 w-4" />
             <span>Seller Dashboard</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => { handleLogout(); onItemClick?.(); }} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
+          <DropdownMenuItem onClick={() => { handleLogout(); }} className="text-destructive focus:bg-destructive/10 focus:text-destructive">
             <LogOut className="mr-2 h-4 w-4" />
             <span>Sign out</span>
           </DropdownMenuItem>
         </>
       ) : (
         <>
-          <DropdownMenuItem onClick={() => { router.push('/login'); onItemClick?.(); }}>
+          <DropdownMenuItem onClick={() => { router.push('/login'); }}>
             <LogIn className="mr-2 h-4 w-4" />
             <span>Login</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => { router.push('/signup'); onItemClick?.(); }}>
+          <DropdownMenuItem onClick={() => { router.push('/signup'); }}>
             <UserPlus className="mr-2 h-4 w-4" />
             <span>Sign Up</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => { router.push('/style-assistant'); onItemClick?.(); }}>
+          <DropdownMenuItem onClick={() => { router.push('/style-assistant'); }}>
             <Sparkles className="mr-2 h-4 w-4" />
             <span>AI Style Assistant</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => { router.push('/shop'); onItemClick?.(); }}>
+          <DropdownMenuItem onClick={() => { router.push('/shop'); }}>
             <Camera className="mr-2 h-4 w-4" />
             <span>AI Try-On</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => { router.push('/seller/dashboard'); onItemClick?.(); }}>
+          <DropdownMenuItem onClick={() => { router.push('/seller/dashboard'); }}>
             <LayoutDashboard className="mr-2 h-4 w-4" />
             <span>Seller Dashboard</span>
           </DropdownMenuItem>
+        </>
+      )}
+    </>
+  );
+
+  const MobileUserMenu = ({ onItemClick }: { onItemClick: () => void }) => (
+    <>
+      {currentUser ? (
+        <>
+          <div className="px-3 py-2 mb-2">
+            <p className="text-sm font-medium leading-none">My Account</p>
+            <p className="text-xs leading-none text-muted-foreground">
+              {currentUser.email}
+            </p>
+          </div>
+          <div className="border-t border-border" />
+          <SheetClose asChild>
+            <Button variant="ghost" onClick={() => { router.push('/wishlist'); onItemClick(); }} className="w-full justify-start text-base py-2">
+              <Heart className="mr-2 h-4 w-4" />
+              <span>Wishlist</span>
+            </Button>
+          </SheetClose>
+          <SheetClose asChild>
+            <Button variant="ghost" onClick={() => { router.push('/style-assistant'); onItemClick(); }} className="w-full justify-start text-base py-2">
+              <Sparkles className="mr-2 h-4 w-4" />
+              <span>AI Style Assistant</span>
+            </Button>
+          </SheetClose>
+          <SheetClose asChild>
+            <Button variant="ghost" onClick={() => { router.push('/seller/dashboard'); onItemClick(); }} className="w-full justify-start text-base py-2">
+              <LayoutDashboard className="mr-2 h-4 w-4" />
+              <span>Seller Dashboard</span>
+            </Button>
+          </SheetClose>
+          <div className="border-t border-border" />
+          <SheetClose asChild>
+            <Button variant="ghost" onClick={() => { handleLogout(); onItemClick(); }} className="w-full justify-start text-base py-2 text-destructive hover:text-destructive">
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Sign out</span>
+            </Button>
+          </SheetClose>
+        </>
+      ) : (
+        <>
+          <SheetClose asChild>
+            <Button variant="ghost" onClick={() => { router.push('/login'); onItemClick(); }} className="w-full justify-start text-base py-2">
+              <LogIn className="mr-2 h-4 w-4" />
+              <span>Login</span>
+            </Button>
+          </SheetClose>
+          <SheetClose asChild>
+            <Button variant="ghost" onClick={() => { router.push('/signup'); onItemClick(); }} className="w-full justify-start text-base py-2">
+              <UserPlus className="mr-2 h-4 w-4" />
+              <span>Sign Up</span>
+            </Button>
+          </SheetClose>
+          <div className="border-t border-border" />
+          <SheetClose asChild>
+            <Button variant="ghost" onClick={() => { router.push('/style-assistant'); onItemClick(); }} className="w-full justify-start text-base py-2">
+              <Sparkles className="mr-2 h-4 w-4" />
+              <span>AI Style Assistant</span>
+            </Button>
+          </SheetClose>
+          <SheetClose asChild>
+            <Button variant="ghost" onClick={() => { router.push('/shop'); onItemClick(); }} className="w-full justify-start text-base py-2">
+              <Camera className="mr-2 h-4 w-4" />
+              <span>AI Try-On</span>
+            </Button>
+          </SheetClose>
+          <SheetClose asChild>
+            <Button variant="ghost" onClick={() => { router.push('/seller/dashboard'); onItemClick(); }} className="w-full justify-start text-base py-2">
+              <LayoutDashboard className="mr-2 h-4 w-4" />
+              <span>Seller Dashboard</span>
+            </Button>
+          </SheetClose>
         </>
       )}
     </>
@@ -206,7 +281,7 @@ export function Header() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 bg-popover text-popover-foreground">
-                <UserActionsMenu />
+                <DropdownUserMenu />
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -239,7 +314,7 @@ export function Header() {
                   ))}
                 </nav>
                 <div className="p-4 border-t border-border">
-                  <UserActionsMenu onItemClick={() => setMobileMenuOpen(false)} />
+                  <MobileUserMenu onItemClick={() => setMobileMenuOpen(false)} />
                 </div>
               </SheetContent>
             </Sheet>

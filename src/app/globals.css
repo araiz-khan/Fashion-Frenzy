@@ -5,29 +5,33 @@
 
 @layer base {
   :root {
-    --background: 350 100% 95%; /* Baby Pink */
+    --background: 0 0% 100%; /* Pure White */
     --foreground: 240 10% 3.9%;
 
-    --primary: 7 100% 50%; /* Brightly Orange */
+    --primary: 200 40% 50%; /* Professional Blue */
     --primary-foreground: 0 0% 100%;
 
     --accent: 150 56% 58%; /* Alert/Highlight Green */
     --accent-foreground: 0 0% 100%;
 
-    --card: 0 0% 100%;
+    --card: 240 10% 97%; /* Very Light Gray */
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
-    --secondary: 240 5% 96%;
+    --secondary: 240 10% 96%;
     --secondary-foreground: 240 10% 3.9%;
-    --muted: 240 5% 90%;
+    --muted: 240 10% 92%;
     --muted-foreground: 240 5% 45%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
     
-    --border: 240 5% 85%;
-    --input: 240 5% 90%;
-    --ring: 7 100% 50%; /* Primary orange for ring */
+    --border: 240 10% 90%;
+    --input: 240 10% 95%;
+    --ring: 200 40% 50%; /* Primary blue for ring */
+    
+    --footer-bg: 240 10% 3.9%;
+    --footer-text: 0 0% 98%;
+    --footer-heading: 0 0% 100%;
     
     --radius: 0.75rem;
   }
@@ -36,7 +40,7 @@
     --background: 240 10% 3.9%; 
     --foreground: 0 0% 98%; 
 
-    --primary: 350 100% 88%; /* Baby Pink for dark mode buttons */
+    --primary: 200 40% 70%; /* Light Blue for dark mode buttons */
     --primary-foreground: 0 0% 10%;
     
     --accent: 150 56% 62%; /* Slightly lighter green for dark mode */
@@ -55,7 +59,11 @@
 
     --border: 240 5% 15%;
     --input: 240 5% 12%;
-    --ring: 350 100% 88%;
+    --ring: 200 40% 70%;
+    
+    --footer-bg: 240 10% 3.9%;
+    --footer-text: 0 0% 98%;
+    --footer-heading: 0 0% 100%;
   }
 
   /* Consolidating base styles here */

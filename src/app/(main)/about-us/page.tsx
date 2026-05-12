@@ -35,7 +35,7 @@ export default function AboutUsPage() {
                             <AvatarFallback>AK</AvatarFallback>
                         </Avatar>
                         <h3 className="text-xl font-semibold font-headline text-foreground">samiullah</h3>
-                        <p className="text-primary font-medium"> AI Developer </p>
+                        <p className="text-primary font-medium">Ai and Backend Developer</p>
                         <p className="mt-2 text-muted-foreground text-center max-w-xs">samiullah is the technical architect behind Fashion Frenzy, blending his love for code with a keen eye for user experience to build a seamless platform.</p>
                     </div>
                     {/* Founder 2 */}
@@ -45,7 +45,7 @@ export default function AboutUsPage() {
                             <AvatarFallback>A</AvatarFallback>
                         </Avatar>
                         <h3 className="text-xl font-semibold font-headline text-foreground">araiz</h3>
-                        <p className="text-primary font-medium">backend developer</p>
+                        <p className="text-primary font-medium">Ai and Frontend Developer</p>
                          <p className="mt-2 text-muted-foreground text-center max-w-xs">araiz is the creative visionary, curating our collection and ensuring every piece reflects our commitment to style, quality, and originality.</p>
                     </div>
                         {/* Founder 3 */}
@@ -55,8 +55,8 @@ export default function AboutUsPage() {
                             <AvatarFallback>AK</AvatarFallback>
                         </Avatar>
                         <h3 className="text-xl font-semibold font-headline text-foreground">sufyan </h3>
-                        <p className="text-primary font-medium">ui designer </p>
-                        <p className="mt-2 text-muted-foreground text-center max-w-xs">samiullah is the technical architect behind Fashion Frenzy, blending his love for code with a keen eye for user experience to build a seamless platform.</p>
+                        <p className="text-primary font-medium">Documentation Expert</p>
+                        <p className="mt-2 text-muted-foreground text-center max-w-xs">sufyan is the technical architect behind Fashion Frenzy, blending his love for code with a keen eye for user experience to build a seamless platform.</p>
                     </div>
                 </div>
             </div>

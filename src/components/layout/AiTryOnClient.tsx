@@ -15,8 +15,6 @@ import type { Product, ProductCategory, ProductSize } from "@/types";
 import { ALL_CATEGORIES, ALL_SIZES } from "@/types";
 import { ProductImage } from "@/components/products/ProductImage";
 
-type AvatarSex = "male" | "female";
-
 export function AiTryOnClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -30,7 +28,6 @@ export function AiTryOnClient() {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [avatarSex, setAvatarSex] = useState<AvatarSex>("male");
 
   const { data: session, status } = useSession();
   const currentUser = session?.user ?? null;
@@ -97,6 +94,13 @@ export function AiTryOnClient() {
     };
   }, [userPreview]);
 
+  const openFilePicker = () => {
+    if (!fileInputRef.current) return;
+
+    fileInputRef.current.value = "";
+    fileInputRef.current.click();
+  };
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
     if (!file) {
@@ -136,7 +140,6 @@ export function AiTryOnClient() {
     const formData = new FormData();
     formData.set("person_file", userFile);
     formData.set("clothing_file", product.imageUrl);
-    formData.set("avatar_sex", avatarSex);
     formData.set("seed", "42");
 
     const response = await fetch("/api/try-on", {
@@ -213,6 +216,15 @@ export function AiTryOnClient() {
       </div>
 
       <div className="max-w-5xl mx-auto space-y-8">
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          className="hidden"
+          accept="image/*"
+          name="person_file"
+        />
+
         {productError ? (
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
@@ -241,29 +253,15 @@ export function AiTryOnClient() {
                     <div className="relative group w-full max-w-sm">
                       <img src={userPreview} alt="Your uploaded photo" className="rounded-lg border shadow-md object-cover aspect-[3/4] w-full" />
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
-                        <Button type="button" variant="secondary" onClick={() => fileInputRef.current?.click()}>Change Photo</Button>
+                        <Button type="button" variant="secondary" onClick={openFilePicker}>Change Photo</Button>
                       </div>
                     </div>
                   ) : (
                     <>
-                      <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" name="person_file" />
-                      <UploadPlaceholder icon={UserIcon} title="Upload Your Picture" description="Clear, front-facing portrait" onClick={() => fileInputRef.current?.click()} />
+                      <UploadPlaceholder icon={UserIcon} title="Upload Your Picture" description="Clear, front-facing portrait" onClick={openFilePicker} />
                     </>
                   )}
 
-                  <div className="w-full max-w-sm space-y-2">
-                    <label className="text-sm font-medium text-foreground" htmlFor="avatar_sex">Avatar sex</label>
-                    <select
-                      id="avatar_sex"
-                      name="avatar_sex"
-                      value={avatarSex}
-                      onChange={(e) => setAvatarSex(e.target.value as AvatarSex)}
-                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                    >
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                    </select>
-                  </div>
                 </div>
 
                 <div className="flex flex-col items-center gap-4">
@@ -326,9 +324,6 @@ export function AiTryOnClient() {
                 <Button size="lg" onClick={() => { setGeneratedImage(null); setUserFile(null); setUserPreview(null); }}>
                   <Sparkles className="mr-2 h-5 w-5" />
                   Try Another Photo
-                </Button>
-                <Button size="lg" variant="outline" asChild>
-                  <a href={generatedImage} target="_blank" rel="noreferrer">Open Result</a>
                 </Button>
                 <Button size="lg" variant="secondary" onClick={() => router.push("/shop")}>
                   Keep Shopping

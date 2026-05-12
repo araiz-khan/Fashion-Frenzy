@@ -93,6 +93,13 @@ export function AiTryOnClient() {
     fetchProduct();
   }, [productId]);
 
+  const openFilePicker = () => {
+    if (!fileInputRef.current) return;
+
+    fileInputRef.current.value = '';
+    fileInputRef.current.click();
+  };
+
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -191,6 +198,14 @@ export function AiTryOnClient() {
         </div>
 
         <div className="max-w-5xl mx-auto space-y-8">
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              className="hidden"
+              accept="image/*"
+            />
+
             {productError ? (
                 <Alert variant="destructive">
                     <AlertTriangle className="h-4 w-4" />
@@ -221,23 +236,16 @@ export function AiTryOnClient() {
                                 <div className="relative group w-full max-w-sm">
                                   <Image src={userImage} alt="Your uploaded photo" width={400} height={533} className="rounded-lg border shadow-md object-cover aspect-[3/4]" />
                                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
-                                    <Button variant="secondary" onClick={() => setUserImage(null)}>Change Photo</Button>
+                                    <Button type="button" variant="secondary" onClick={openFilePicker}>Change Photo</Button>
                                   </div>
                                 </div>
                               ) : (
                                 <>
-                                  <input 
-                                    type="file" 
-                                    ref={fileInputRef} 
-                                    onChange={handleFileChange} 
-                                    className="hidden" 
-                                    accept="image/*"
-                                  />
                                   <UploadPlaceholder 
                                     icon={UserIcon}
                                     title="Upload Your Picture"
                                     description="Clear, front-facing portrait"
-                                    onClick={() => fileInputRef.current?.click()}
+                                    onClick={openFilePicker}
                                   />
                                 </>
                               )}
