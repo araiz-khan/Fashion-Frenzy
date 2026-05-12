@@ -57,7 +57,7 @@ export default function ContactPage() {
                   <div>
                     <h3 className="text-lg font-semibold text-foreground">Email Us</h3>
                     <a href="mailto:aqibbrand784@gmail.com" className="text-muted-foreground hover:text-primary transition-colors">
-                      
+                      fashionfrenzy@fr.com
                     </a>
                   </div>
                 </div>
