@@ -207,18 +207,6 @@ src/
 
 ---
 
-## 👥 Team
-
-### Meet The Founders
-
-| | | |
-|---|---|---|
-| **Samiullah** | **Araiz** | **Sufyan** |
-| AI & Frontend Developer | Backend Developer | UI Designer |
-| *Technical architect blending code with user experience* | *Creative visionary curating our collection* | *Crafting intuitive and beautiful interfaces* |
-
----
-
 ## 🤝 Contributing
 
 We welcome contributions! Please follow these steps:
