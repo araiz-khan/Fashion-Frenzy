@@ -20,7 +20,7 @@ export default function AboutUsPage() {
               <p>
                 At Fashion Frenzy, our mission is to build a vibrant community where independent fashion designers and small brands can thrive. We are driven by a passion for unique designs and high-quality craftsmanship that stands apart from mass-produced trends. We provide a platform for creators to share their stories and for you to discover pieces that are as unique as you are.
               </p>
-              <p>ç
+              <p>
                 Every stitch, fabric, and design in our collection is a testament to the creativity and dedication of our partner brands. By choosing to shop with us, you are not just buying a piece of clothing; you are supporting a dream, empowering an artist, and investing in a more sustainable and diverse fashion industry. Thank you for joining us on this stylish journey.
               </p>
             </div>
