@@ -1,4 +1,4 @@
-# 👗 Fashion Frenzy - Support Small Fashion Brands
+# Fashion Frenzy
 
 <div align="center">
 
@@ -15,13 +15,13 @@
 
 ---
 
-## 🎯 About Fashion Frenzy
+## About Fashion Frenzy
 
 Fashion Frenzy is a modern e-commerce platform dedicated to supporting small fashion brands and independent designers. We believe fashion is more than just clothing—it's a form of self-expression, creativity, and a way to support independent art.
 
 Our mission is to build a vibrant community where independent fashion designers and small brands can thrive by providing them with a platform to showcase their unique designs while offering customers an exceptional shopping experience.
 
-### ✨ Why Fashion Frenzy?
+### Why Fashion Frenzy?
 
 - **Support Independent Creators** - Every purchase directly supports small fashion brands
 - **AI-Powered Shopping** - Virtual try-on and personalized style recommendations
@@ -31,52 +31,48 @@ Our mission is to build a vibrant community where independent fashion designers 
 
 ---
 
-## 🌟 Features
+## Features
 
-### 🛍️ E-Commerce
+### E-Commerce
 - **Responsive Product Catalog** - Browse hundreds of curated fashion items
 - **Advanced Filtering** - Filter by category, price, style, and more
 - **Product Reviews** - Read authentic customer reviews and ratings
 - **Wishlist & Cart** - Save favorites and manage purchases
 - **Multiple Payment Options** - Secure checkout with various payment methods
 
-### 🤖 AI-Powered Features
+### AI-Powered Features
 - **Virtual Try-On** - See how clothes look on you before purchasing
 - **AI Style Assistant** - Get personalized style recommendations
 - **Review Summarization** - AI-generated product review summaries
 - **Smart Search** - Intelligent product discovery
 
-### 🎨 User Experience
+### User Experience
 - **Dark/Light Mode** - Seamless theme switching
 - **Mobile Optimized** - Perfect experience on all devices
 - **Fast Performance** - Optimized for speed and reliability
 - **Accessibility** - WCAG compliant design
 
-### 👔 Seller Dashboard
+### Seller Dashboard
 - **Product Management** - Manage inventory and listings
 - **Analytics** - Track sales and customer insights
 - **Order Management** - Monitor and fulfill orders
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Frontend
 - **Next.js 15** - React framework for production
 - **TypeScript** - Type-safe development
 - **Tailwind CSS** - Utility-first CSS framework
-- **Shadcn/UI** - High-quality React components
-- **Radix UI** - Unstyled, accessible components
 
 ### Backend & Services
 - **Next.js API Routes** - Serverless backend functions
 - **MongoDB** - NoSQL database
-- **Firebase** - Authentication & Real-time features
 - **Cloudinary** - Image optimization & delivery
 - **Google Genkit** - AI/ML powered features
 
 ### AI & ML
-- **Google Genkit** - AI framework for flows
 - **Hugging Face** - ML models integration
 - **RapidAPI** - Virtual try-on integration
 
@@ -87,7 +83,7 @@ Our mission is to build a vibrant community where independent fashion designers 
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Node.js 18+ 
@@ -179,7 +175,7 @@ src/
 
 ---
 
-## 🎨 Color Scheme
+## Color Scheme
 
 **Light Mode:**
 - Background: Pure White
@@ -193,7 +189,7 @@ src/
 
 ---
 
-## 📚 Key Pages
+## Key Pages
 
 - **Home** (`/`) - Landing page with featured products
 - **Shop** (`/shop`) - Full product catalog with filters
@@ -207,7 +203,7 @@ src/
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Please follow these steps:
 
@@ -219,13 +215,7 @@ We welcome contributions! Please follow these steps:
 
 ---
 
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
----
-
-## 📞 Contact & Support
+## Contact & Support
 
 - **Email** - support@fashionfrenzy.com
 - **Website** - [fashionfrenzy.com](https://fashionfrenzy.com)
@@ -234,7 +224,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Special thanks to all independent fashion designers and small brands
 - Built with ❤️ for the fashion community
